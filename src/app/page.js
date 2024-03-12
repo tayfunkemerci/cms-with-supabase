@@ -2,14 +2,12 @@ import {createServerComponentClient} from '@supabase/auth-helpers-nextjs'
 import {cookies} from "next/headers";
 import AuthButtonServer from "@/app/components/auth-button-server";
 import {redirect} from "next/navigation";
+import withAuth from "@/app/hoc/withAuth";
 
-export default async function Home() {
+async function Home() {
   const supabase = createServerComponentClient({cookies})
     const {data:{session}} = await supabase.auth.getSession();
-  if (!session) {
-      redirect('/login');
-  }
-  const {data:tweets} = await supabase.from('tweets').select();
+  const {data:tweets} = await supabase.from('tweets')
   return (
       <>
         <AuthButtonServer/>
@@ -21,3 +19,5 @@ export default async function Home() {
       </>
   );
 }
+
+export default withAuth(Home)
